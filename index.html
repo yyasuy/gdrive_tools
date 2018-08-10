@@ -1,0 +1,48 @@
+<?php
+require_once( 'lib.php' );
+require_once( 'config.php' );
+require_once( 'oauth.php' );
+$_auth_code = _get_request_param( 'code' );
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script type="text/javascript" src="/js/jquery/jquery.js"></script>
+<script type="text/javascript" src="/js/jquery/jquery-ui.js"></script>
+<script type="text/javascript">
+$( function(){
+	$( "#button_get_code" ).click( function(){
+		const auth_url = '<?php echo AUTH_URL; ?>';
+		const client_id = '<?php echo CLIENT_ID; ?>';
+		const scope = '<?php echo SCOPE; ?>';
+		const redirect_url = '<?php echo _get_self_url_base(); ?>';
+		let g_auth_url = auth_url +
+			'?client_id=' + client_id +
+			'&scope=' + scope +
+			'&access_type=offline' +
+			'&include_granted_scopes=true' + 
+			'&redirect_uri=' + redirect_url +
+			'&response_type=code' +
+			'&prompt=consent select_account';
+		location.href = encodeURI( g_auth_url );
+	} );
+} );
+</script>
+
+</head>
+
+<body>
+<button id="button_get_code">Get authorization code</button>
+
+<?php
+if( $_auth_code != '' ){
+	$token_json = _get_and_save_token( $_auth_code );
+	printf( '<p>Authorization Code: %s</p>', $_auth_code );
+	printf( '<p>Access Token: %s</p>', $token_json[ 'access_token' ] );
+	printf( '<p>Refresh Token: %s</p>', $token_json[ 'refresh_token' ] );
+}
+?>
+
+</body>
+</html>
