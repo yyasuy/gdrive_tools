@@ -23,36 +23,32 @@ curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
 
 // Handle the result
 $response_text = curl_exec( $ch );
-$returned_json = json_decode( $response_text, true );
-if( !array_key_exists( 'error', $returned_json ) ){
+$response_json = json_decode( $response_text, true );
+if( !array_key_exists( 'error', $response_json ) ){
 	printf( "success\n" );
 }else{
+	var_dump( $response_json );
+	sleep( 10 );
 	// Access Token is no more valid. Try to renew the Access Token using the Refresh Token.
 	$response_json = _refresh_token();
 	if( array_key_exists( 'error', $response_json ) ){
-		var_dump( $returned_json );
+		var_dump( $response_json );
 		printf( "\nCannot refresh\n" );
 		exit();
 		
 	}
 	printf( "refreshed\n" );
-	$returned_json = json_decode( $response_text, true );
-	if( array_key_exists( 'error', $returned_json ) ){
-		var_dump( $returned_json );
-		printf( "\nCannot authenticate\n" );
-		exit();
-	}
 }
 
-$doc_name = $returned_json[ 'properties' ][ 'title' ];
+$doc_name = $response_json[ 'properties' ][ 'title' ];
 
 $sheet_names = array();
-foreach( $returned_json[ 'sheets' ] as $sheet_info ){
+foreach( $response_json[ 'sheets' ] as $sheet_info ){
 	$sheet_names[] = $sheet_info[ 'properties' ][ 'title' ];
 }
 
 // Get range data
-// I don't use batchGet. Below is just an example of how to use it.
+// Below is just an example of how to use batchGet. I don't use it though.
 // GET https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/values:batchGet?ranges=シート1!A1:B2&ranges=シート1!C1:C3
 $row_data_array = array();
 foreach( $sheet_names as $sheet_name ){
@@ -71,8 +67,8 @@ foreach( $sheet_names as $sheet_name ){
 
 	// Handle the result
 	$response_text = curl_exec( $ch );
-	$returned_json = json_decode( $response_text, true );
-	foreach( $returned_json[ 'values' ] as $row_values ){
+	$response_json = json_decode( $response_text, true );
+	foreach( $response_json[ 'values' ] as $row_values ){
 		if( !isset( $row_values[ 0 ] ) ) $row_values[ 0 ] = '';
 		if( !isset( $row_values[ 1 ] ) ) $row_values[ 1 ] = '';
 		if( !isset( $row_values[ 2 ] ) ) $row_values[ 2 ] = '';
@@ -85,6 +81,7 @@ foreach( $sheet_names as $sheet_name ){
 }
 
 try{
+
 
 $pdo = new PDO(
         'mysql:dbname=' . DB_NAME . ';host=' . DB_HOST . ';charset=utf8mb4',
@@ -118,6 +115,7 @@ foreach( $row_data_array as $cols ){
 
 	$stmt->execute();
 }
+
 
 }catch( PDOException $_e ){
 	exit( $_e -> getMessage() );
