@@ -38,6 +38,9 @@ if( !array_key_exists( 'error', $response_json ) ){
 		
 	}
 	printf( "refreshed\n" );
+	sleep( 10 );
+	$response_text = curl_exec( $ch );
+	$response_json = json_decode( $response_text, true );
 }
 
 $doc_name = $response_json[ 'properties' ][ 'title' ];
