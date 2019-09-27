@@ -39,9 +39,23 @@ if( !array_key_exists( 'error', $response_json ) ){
 	}
 	printf( "refreshed\n" );
 	sleep( 10 );
+
+	$token_json = _load_token();
+	$access_token = $token_json[ 'access_token' ];
+	$refresh_token = $token_json[ 'refresh_token' ];
+	$header = sprintf( 'Authorization: Bearer %s', $access_token );
+	$sheet_id = '1S0J0pcMwnb97GY-hI9HypgOIIidOCBytPu6HHyvwjsU';
+	$url = sprintf( '%s/%s', GSHEETS_URL, $sheet_id );
+	$ch = curl_init();
+	curl_setopt( $ch, CURLOPT_URL, $url );
+	curl_setopt( $ch, CURLOPT_POST, false );
+	curl_setopt( $ch, CURLOPT_HTTPHEADER, array( $header ) );
+	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
 	$response_text = curl_exec( $ch );
 	$response_json = json_decode( $response_text, true );
 }
+
+var_dump( $response_json );
 
 $doc_name = $response_json[ 'properties' ][ 'title' ];
 
