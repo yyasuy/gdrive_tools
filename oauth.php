@@ -30,7 +30,8 @@ function _get_and_save_token( $_auth_code ){
 
 function _save_token( $_token_json_text ){
 	$file = fopen( TOKEN_FILE, 'w' );
-	chmod( TOKEN_FILE, 0266 );
+//	chmod( TOKEN_FILE, 0266 );
+	chmod( TOKEN_FILE, 0666 );
 	fwrite( $file, $_token_json_text );
 }
 
