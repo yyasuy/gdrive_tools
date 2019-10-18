@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script type="text/javascript" src="/js/jquery/jquery.js"></script>
+<script type="text/javascript" src="/js/jquery/jquery-ui.js"></script>
+<script type="text/javascript">
+$( function(){
+} );
+</script>
+</head>
+
+<body>
+<?php
+	$command = 'echo "" > /tmp/test.log; chmod 777 /tmp/test.log; php /var/www/html/gdrive_tools/gsheet.php > /tmp/test.log 2>&1 &';
+	exec( $command );
+	printf( '<h1>OK</h1>' );
+?>
+</body>
+</html>
