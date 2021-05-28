@@ -54,6 +54,13 @@ if( !array_key_exists( 'error', $file_list_json ) ){
 		$link    = $file_items[ 'webViewLink' ];
 		$user    = $file_items[ 'lastModifyingUser' ][ 'displayName' ];
 		$updated = _utc_to_localtime( $file_items[ 'modifiedTime' ] );
+		$ignore = false;
+		foreach( $IGNORE_LIST as $ignore_file ){
+			if( strpos( $link, $ignore_file ) !== false ){
+				$ignore = true;
+			}
+		}
+		if( $ignore == true ) continue;
 		$mail_body .= sprintf( "----------\n" );
 		$mail_body .= sprintf( "$name\n$link\n$updated by $user\n" );
 	}
